@@ -1,0 +1,4 @@
+# In report/week*, track only PDF files (including nested folders).
+/report/week*/**
+!/report/week*/**/
+!/report/week*/**/*.pdf
