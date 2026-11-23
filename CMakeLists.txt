@@ -1,0 +1,36 @@
+cmake_minimum_required(VERSION 3.16)
+project(cvrp LANGUAGES CXX)
+
+add_library(cvrp_core src/io.cpp src/construct.cpp src/search.cpp src/local_search.cpp)
+target_compile_features(cvrp_core PUBLIC cxx_std_17)
+target_include_directories(cvrp_core PUBLIC ${PROJECT_SOURCE_DIR}/src)
+add_executable(cvrp src/main.cpp)
+target_link_libraries(cvrp PRIVATE cvrp_core)
+if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Avoid loading an incompatible runtime from Git Bash's earlier PATH entry.
+    target_link_options(cvrp PRIVATE -static)
+endif()
+foreach(target cvrp cvrp_core)
+    set_target_properties(${target} PROPERTIES CXX_EXTENSIONS OFF)
+    if(MSVC)
+        target_compile_options(${target} PRIVATE /W4)
+    else()
+        target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic)
+    endif()
+endforeach()
+
+include(CTest)
+if(BUILD_TESTING)
+    find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
+    add_test(NAME foundation COMMAND "${Python3_EXECUTABLE}"
+             "${PROJECT_SOURCE_DIR}/tests/test_foundation.py" "$<TARGET_FILE:cvrp>")
+    add_executable(search_unit tests/search_unit.cpp)
+    target_link_libraries(search_unit PRIVATE cvrp_core)
+    if(MINGW AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_link_options(search_unit PRIVATE -static)
+    endif()
+    add_test(NAME search_unit COMMAND search_unit)
+    add_test(NAME search_cli COMMAND "${Python3_EXECUTABLE}"
+             "${PROJECT_SOURCE_DIR}/tests/test_search.py" "$<TARGET_FILE:cvrp>"
+             "${PROJECT_SOURCE_DIR}/examples/line4.vrp")
+endif()
