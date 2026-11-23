@@ -2,3 +2,41 @@
 /report/week*/**
 !/report/week*/**/
 !/report/week*/**/*.pdf
+
+# C++ / CMake build artifacts
+/build*/
+CMakeUserPresets.json
+compile_commands.json
+*.o
+*.obj
+*.pdb
+*.ilk
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# CVRPLib downloaded raw files (keep manifest.csv tracked)
+/data/cvrplib-x/*.vrp
+/data/cvrplib-x/*.sol
+/data/cvrplib-x/*.html
+/data/cvrplib-x/*.zip
+/data/cvrplib-x/*.gz
+
+# Editor / OS / temp files
+.vscode/
+.vs/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.swp
+*~
+
+# Internal documents
+docs/
+
